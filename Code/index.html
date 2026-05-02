@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Airbnb NYC - Data Visualization Dashboard</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="loading" id="loader">
+    <div class="spinner"></div>
+    Đang tải dữ liệu CSV bằng D3.js...
+  </div>
+
+  <div class="overlay-loader" id="overlayLoader">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="dashboard" id="dashboard">
+    <!-- Header -->
+    <div class="header">
+      <div class="label">Tổng lượt review</div>
+      <div class="big-number" id="totalNumber">---</div>
+    </div>
+
+    <div class="main-grid">
+      <!-- Left column: line chart + sentiment table -->
+      <div class="col-left">
+        <div class="panel" id="linePanel">
+          <h2 id="lineTitle">Số lượng review qua từng năm</h2>
+          <div id="lineChart"></div>
+        </div>
+        <div class="panel" id="sentPanel">
+          <h2>Phân tích thái độ review của khách theo từng quận</h2>
+          <div id="sentTable"></div>
+        </div>
+      </div>
+      <!-- Right column: bar chart full height -->
+      <div class="panel" id="barPanel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h2 style="margin-bottom: 0;">Host được review nhiều nhất</h2>
+          <div id="sortToggle" class="clickable"
+            style="color: #4472c4; font-size: 12px; font-weight: bold; text-decoration: underline;">Sort ▼</div>
+        </div>
+        <div id="barChartWrap">
+          <div id="barChart"></div>
+          <div id="barXAxis"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
