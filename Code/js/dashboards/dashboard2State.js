@@ -31,6 +31,7 @@
   let neighborhoodsGeoPromise = null;
   let normalizedNeighborhoodsGeoCache = null;
   let activeSelection = null;
+  let bookingSortOrder = 'desc';
 
   function toNumber(value, fallback = 0) {
     const number = +value;
@@ -129,6 +130,15 @@
 
   D2.toggleSelection = function toggleSelection(type, value) {
     activeSelection = D2.isActiveSelection(type, value) ? null : { type, value };
+    if (typeof window.renderDashboard2 === 'function') window.renderDashboard2();
+  };
+
+  D2.getBookingSortOrder = function getBookingSortOrder() {
+    return bookingSortOrder;
+  };
+
+  D2.toggleBookingSortOrder = function toggleBookingSortOrder() {
+    bookingSortOrder = bookingSortOrder === 'desc' ? 'asc' : 'desc';
     if (typeof window.renderDashboard2 === 'function') window.renderDashboard2();
   };
 
@@ -237,11 +247,13 @@
       d => d.neighbourhood_cleansed || 'Unknown'
     );
 
+    const direction = bookingSortOrder === 'desc' ? d3.descending : d3.ascending;
+
     return Array.from(byNeighborhood, ([neighbourhood, avgDays]) => ({
       neighbourhood,
       avgDays: +avgDays || 0,
     })).sort((a, b) =>
-      d3.descending(a.avgDays, b.avgDays) || d3.ascending(a.neighbourhood, b.neighbourhood)
+      direction(a.avgDays, b.avgDays) || d3.ascending(a.neighbourhood, b.neighbourhood)
     );
   };
 
