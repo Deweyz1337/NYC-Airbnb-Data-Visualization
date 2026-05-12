@@ -482,8 +482,8 @@ body.is-resizing * {
 
 .kpi-chart-value {
   font-family: 'Montserrat', sans-serif;
-  font-size: 38px;
-  line-height: 1;
+  font-size: 30px;
+  line-height: 1.05;
   font-weight: 800;
   letter-spacing: 0;
   color: #4472c4;
@@ -494,7 +494,7 @@ body.is-resizing * {
 
 .kpi-chart-meta {
   margin-top: 8px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: #7b8494;
   letter-spacing: 0;
@@ -837,6 +837,12 @@ body.is-resizing * {
   box-shadow: 0 0 8px rgba(68, 114, 196, 0.6);
 }
 
+.panel.kpi-chart-panel h2 {
+  font-size: 14px;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
 .chart-panel-toolbar {
   display: flex;
   justify-content: space-between;
@@ -976,25 +982,113 @@ svg text {
   font-family: 'Inter', sans-serif
 }
 
-@media (max-width: 1100px) {
-  .brooklyn-revenue-legend {
-    position: static;
-    width: 100%;
-    margin-top: 10px;
+@media (max-width: 1280px) {
+  .kpi-chart-panel {
+    padding: 10px 12px;
   }
 
-  .brooklyn-revenue-layout {
-    overflow: visible;
+  .panel.kpi-chart-panel h2 {
+    font-size: 13px;
+    margin-bottom: 6px;
   }
 
+  .kpi-chart-body {
+    padding: 4px 2px 2px;
+  }
+
+  .kpi-chart-value {
+    font-size: 24px;
+  }
+
+  .kpi-chart-meta {
+    margin-top: 6px;
+    font-size: 10px;
+    line-height: 1.25;
+  }
+
+  .brooklyn-revenue-layout,
   .room-share-layout {
-    padding-right: 0;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .brooklyn-revenue-map,
+  .room-share-chart {
+    flex: 1 1 0;
+    width: auto;
+    height: auto;
+  }
+
+  .brooklyn-revenue-legend {
+    position: relative;
+    top: auto;
+    right: auto;
+    flex: 0 0 158px;
+    width: 158px;
+    margin-top: 0;
+    padding: 8px 10px;
+    box-shadow: none;
+    z-index: 1;
+  }
+
+  .brooklyn-revenue-legend-title {
+    margin-bottom: 6px;
+  }
+
+  .brooklyn-revenue-legend-body {
+    height: 72px;
+  }
+
+  .brooklyn-revenue-legend-labels,
+  .brooklyn-revenue-legend-zero {
+    font-size: 10px;
   }
 
   .room-share-legend {
-    position: static;
-    width: 100%;
+    position: relative;
+    top: auto;
+    right: auto;
+    flex: 0 0 190px;
+    width: 190px;
     max-height: none;
-    margin-top: 10px;
+    margin-top: 0;
+    gap: 6px 10px;
+    padding: 7px 9px;
+    box-shadow: none;
+    z-index: 1;
+  }
+
+  .room-share-row {
+    font-size: 11px;
+  }
+
+  .room-share-meta {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .kpi-chart-value {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 760px) {
+  .brooklyn-revenue-layout,
+  .room-share-layout {
+    flex-direction: column;
+  }
+
+  .brooklyn-revenue-map,
+  .room-share-chart {
+    width: 100%;
+  }
+
+  .brooklyn-revenue-legend,
+  .room-share-legend {
+    flex: 0 0 auto;
+    width: 100%;
   }
 }
