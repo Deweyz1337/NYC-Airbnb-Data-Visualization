@@ -5,8 +5,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Airbnb NYC - Data Visualization Dashboard</title>
+  <link rel="icon" href="data:,">
   <script src="https://d3js.org/d3.v7.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800;900&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -25,28 +27,92 @@
   <div class="dashboard" id="dashboard">
     <!-- Header -->
     <div class="header">
-      <div class="label">Tổng lượt review</div>
-      <div class="big-number" id="totalNumber">---</div>
+      <div class="header-spacer" aria-hidden="true"></div>
+      <div class="header-title">
+        <h1>Tình hình đánh giá tại quận Brooklyn</h1>
+      </div>
+      <div class="dashboard-nav">
+        <div class="dash-select" id="dashSelect">
+          <div class="dash-select-trigger" id="dashSelectTrigger">
+            <!-- Grid/Dashboard icon -->
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
+            <span class="dash-select-label" id="dashSelectLabel">Dashboard 1</span>
+            <!-- Chevron icon -->
+            <svg class="dash-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+          <div class="dash-select-dropdown" id="dashSelectDropdown">
+            <div class="dash-option active" data-page="0">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+              </svg>
+              Dashboard 1
+            </div>
+            <div class="dash-option" data-page="1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="16" />
+                <line x1="8" y1="12" x2="16" y2="12" />
+              </svg>
+              Dashboard 2
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <div class="main-grid">
+    <div class="main-grid" id="mainGrid">
       <!-- Left column: line chart + sentiment table -->
-      <div class="col-left">
+      <div class="col-left" id="colLeft">
         <div class="panel" id="linePanel">
           <h2 id="lineTitle">Số lượng review qua từng năm</h2>
           <div id="lineChart"></div>
         </div>
+        <div class="resizer-v" id="resizerV"></div>
         <div class="panel" id="sentPanel">
-          <h2>Phân tích thái độ review của khách theo từng quận</h2>
+          <h2>Thái độ review của khách theo từng quận</h2>
           <div id="sentTable"></div>
         </div>
       </div>
+      <div class="resizer-h" id="resizerH"></div>
       <!-- Right column: bar chart full height -->
       <div class="panel" id="barPanel">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-          <h2 style="margin-bottom: 0;">Host được review nhiều nhất</h2>
-          <div id="sortToggle" class="clickable"
-            style="color: #4472c4; font-size: 12px; font-weight: bold; text-decoration: underline;">Sort ▼</div>
+          <h2 style="margin-bottom: 0;">Khu phố được review nhiều nhất</h2>
+          <div id="sortToggle" class="clickable" title="Sắp xếp (Tăng/Giảm)"
+            style="color: #4472c4; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; background: #ebf0f7; transition: background 0.2s;">
+            <!-- Icon Sort Ascending -->
+            <svg id="icon-sort-asc" style="display: none; width: 18px; height: 18px; fill: currentColor;"
+              xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision"
+              text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd"
+              clip-rule="evenodd" viewBox="0 0 512 421.65">
+              <path fill-rule="nonzero"
+                d="M383.01 379.71c11.57 0 20.97 9.4 20.97 20.97 0 11.57-9.4 20.97-20.97 20.97l-362.04-.44C9.4 421.21 0 411.81 0 400.24c0-11.57 9.4-20.97 20.97-20.97l362.04.44zm-90.97-238.93c-7.91 7.94-20.8 7.99-28.74.08-7.94-7.91-7.99-20.8-.08-28.74L369.33 5.98c7.91-7.94 20.79-7.99 28.73-.08l107.98 107.91c7.95 7.94 7.95 20.87 0 28.81-7.94 7.95-20.87 7.95-28.81 0l-73.12-73.11.32 206.4c0 11.2-9.1 20.3-20.3 20.3-11.2 0-20.29-9.1-20.29-20.3l-.32-206.63-71.48 71.5zM171.62 40.59c11.57 0 20.97 9.41 20.97 20.98 0 11.56-9.4 20.97-20.97 20.97l-150.65-.16C9.4 82.38 0 72.97 0 61.4c0-11.56 9.4-20.97 20.97-20.97l150.65.16zm41.33 170.71c11.57 0 20.97 9.4 20.97 20.97 0 11.57-9.4 20.97-20.97 20.97l-191.98-.23C9.4 253.01 0 243.61 0 232.04c0-11.56 9.4-20.97 20.97-20.97l191.98.23z" />
+            </svg>
+            <!-- Icon Sort Descending (Flipped vertically via CSS transform) -->
+            <svg id="icon-sort-desc"
+              style="display: block; width: 18px; height: 18px; fill: currentColor; transform: scaleY(-1);"
+              xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision"
+              text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd"
+              clip-rule="evenodd" viewBox="0 0 512 421.65">
+              <path fill-rule="nonzero"
+                d="M383.01 379.71c11.57 0 20.97 9.4 20.97 20.97 0 11.57-9.4 20.97-20.97 20.97l-362.04-.44C9.4 421.21 0 411.81 0 400.24c0-11.57 9.4-20.97 20.97-20.97l362.04.44zm-90.97-238.93c-7.91 7.94-20.8 7.99-28.74.08-7.94-7.91-7.99-20.8-.08-28.74L369.33 5.98c7.91-7.94 20.79-7.99 28.73-.08l107.98 107.91c7.95 7.94 7.95 20.87 0 28.81-7.94 7.95-20.87 7.95-28.81 0l-73.12-73.11.32 206.4c0 11.2-9.1 20.3-20.3 20.3-11.2 0-20.29-9.1-20.29-20.3l-.32-206.63-71.48 71.5zM171.62 40.59c11.57 0 20.97 9.41 20.97 20.98 0 11.56-9.4 20.97-20.97 20.97l-150.65-.16C9.4 82.38 0 72.97 0 61.4c0-11.56 9.4-20.97 20.97-20.97l150.65.16zm41.33 170.71c11.57 0 20.97 9.4 20.97 20.97 0 11.57-9.4 20.97-20.97 20.97l-191.98-.23C9.4 253.01 0 243.61 0 232.04c0-11.56 9.4-20.97 20.97-20.97l191.98.23z" />
+            </svg>
+          </div>
         </div>
         <div id="barChartWrap">
           <div id="barChart"></div>
@@ -54,9 +120,76 @@
         </div>
       </div>
     </div>
+
+    <!-- Dashboard 2 -->
+    <div id="page2" style="display:none; flex:1; flex-direction:column; min-height:0;">
+      <div class="main-grid page2-main-grid" id="page2MainGrid">
+        <div class="panel kpi-chart-panel" id="page2RevenueKpiPanel">
+          <h2>Tổng doanh thu</h2>
+          <div class="kpi-chart-body">
+            <div class="kpi-chart-value" id="dashboard2TotalRevenue">---</div>
+            <div class="kpi-chart-meta">Tổng doanh thu ở Brooklyn</div>
+          </div>
+        </div>
+        <div class="panel kpi-chart-panel" id="page2AreaKpiPanel">
+          <h2>Số lượng khu vực</h2>
+          <div class="kpi-chart-body">
+            <div class="kpi-chart-value" id="dashboard2AreaCount">---</div>
+            <div class="kpi-chart-meta">Khu vực</div>
+          </div>
+        </div>
+        <div class="panel kpi-chart-panel" id="page2BookedDaysKpiPanel">
+          <h2>Tổng số ngày được đặt trước</h2>
+          <div class="kpi-chart-body">
+            <div class="kpi-chart-value" id="dashboard2BookedDays">---</div>
+            <div class="kpi-chart-meta">Số ngày đặt trước</div>
+          </div>
+        </div>
+        <div class="col-left page2-col-left" id="page2ColLeft">
+          <div class="panel page2-scatter-panel" id="page2ScatterPanel">
+            <h2>Doanh thu theo khu phố ở Brooklyn</h2>
+            <div class="brooklyn-revenue-layout">
+              <div id="brooklynRevenueMap" class="brooklyn-revenue-map"></div>
+              <div id="brooklynRevenueLegend" class="brooklyn-revenue-legend"></div>
+            </div>
+          </div>
+          <div class="resizer-v" id="page2ResizerV"></div>
+          <div class="panel page2-booking-panel" id="page2BookingPanel">
+            <h2>Trung bình số ngày đặt phòng theo khu phố ở Brooklyn</h2>
+            <div id="brooklynBookingChart" class="brooklyn-booking-chart"></div>
+          </div>
+        </div>
+        <div class="resizer-h" id="page2ResizerH"></div>
+        <div class="panel page2-room-panel" id="page2RoomPanel">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h2 style="margin-bottom: 0;">Tỉ lệ ngày được đặt trước theo phân khúc giá ở Brooklyn</h2>
+          </div>
+          <div class="room-share-layout">
+            <div id="roomShareChart" class="room-share-chart"></div>
+            <div id="roomShareLegend" class="room-share-legend"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <script src="script.js"></script>
+  <!-- JS Modules (thứ tự quan trọng: data → filters → charts → navigation → resizers → main) -->
+  <script src="js/data.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/charts/lineChart.js"></script>
+  <script src="js/charts/barChart.js"></script>
+  <script src="js/charts/sentimentTable.js"></script>
+  <script src="js/dashboards/dashboard1.js"></script>
+  <script src="js/dashboards/dashboard2State.js"></script>
+  <script src="js/charts/dashboard2Kpis.js"></script>
+  <script src="js/charts/dashboard2Map.js"></script>
+  <script src="js/charts/dashboard2Pie.js"></script>
+  <script src="js/charts/dashboard2Booking.js"></script>
+  <script src="js/dashboards/dashboard2.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/resizers.js"></script>
+  <script src="js/panelDragDrop.js"></script>
+  <script src="js/main.js"></script>
 </body>
 
 </html>
