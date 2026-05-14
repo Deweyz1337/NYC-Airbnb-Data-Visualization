@@ -18,41 +18,101 @@ Code/
 │       ├── lineChart.js          # Biểu đồ đường (review theo năm)
 │       ├── barChart.js           # Biểu đồ cột ngang (review theo khu phố)
 │       └── sentimentTable.js     # Bảng sentiment heatmap
-├── design.md                     # Tài liệu thiết kế UI
+
+fixed_data/
+├── fixed_listings.csv
+├── fixed_reviews_sentiment.csv
+├── fixed_calendar.csv
+├── neighbourhoods.geojson
+
+
 ```
-
-## Yêu cầu
-
-- Trình duyệt hiện đại (Chrome, Firefox, Edge)
-- Một HTTP server cục bộ (không mở file trực tiếp bằng `file://`)
 
 ## Cách chạy
 
-### Cách 1: Node.js — http-server (khuyến nghị)
+### 1. Cài Node.js
 
-```bash
-cd "Data visualization"
-npx -y http-server . -p 8000
+Tải và cài Node.js bản LTS từ:
+
+```text
+https://nodejs.org
 ```
 
-Mở trình duyệt: **http://localhost:8000/Code/index.html**
+Kiểm tra sau khi cài:
 
-### Cách 2: VS Code — Live Server Extension
+```bash
+node --version
+npm --version
+```
+
+### 2. Chuẩn bị dữ liệu
+
+Đảm bảo thư mục `fixed_data` nằm ở thư mục gốc project và có đủ các file:
+
+```text
+fixed_data/fixed_listings.csv
+fixed_data/fixed_reviews_sentiment.csv
+fixed_data/neighbourhoods.geojson
+```
+
+
+### 3. Chạy project
+
+Mở terminal tại thư mục gốc project, nơi có `package.json`, rồi chạy một trong các cách sau.
+
+#### Windows
+
+```bash
+.\start.bat
+```
+
+#### macOS / Linux
+
+```bash
+chmod +x ./start.sh
+./start.sh
+```
+
+#### Chạy bằng npm
+
+```bash
+npm start
+```
+
+Sau đó mở trình duyệt tại:
+
+```text
+http://localhost:8000/Code/index.html
+```
+
+Nếu cổng `8000` đang bị chiếm, chạy thủ công bằng cổng khác:
+
+```bash
+npx -y http-server . -p 8001
+```
+
+và mở:
+
+```text
+http://localhost:8001/Code/index.html
+```
+
+### Cách khác: VS Code Live Server
 
 1. Cài extension **Live Server** trong VS Code
 2. Click chuột phải vào `Code/index.html` → **Open with Live Server**
 
 ## Dữ liệu
 
-Dashboard đọc 3 file CSV nằm ở thư mục gốc của project:
+Dashboard đọc các file trong thư mục `fixed_data`:
 
 | File | Mô tả |
 |------|--------|
 | `fixed_data/fixed_listings.csv` | Dữ liệu listings đã được làm sạch |
 | `fixed_data/fixed_reviews_sentiment.csv` | Dữ liệu reviews kèm nhãn sentiment |
-| `listings.csv` | Dữ liệu listings gốc (lấy host_name) |
+| 'fixed_data/fixed_calendar.csv' | Dữ liệu lịch đặt trước đã được làm sạch |
+| `fixed_data/neighbourhoods.geojson` | Dữ liệu ranh giới khu vực để vẽ bản đồ |
 
-> **Lưu ý:** Các file CSV có dung lượng lớn và đã được thêm vào `.gitignore`. Đảm bảo các file này tồn tại trước khi chạy dashboard.
 
 ## Tính năng
 
