@@ -78,6 +78,11 @@ body.is-resizing * {
   box-shadow: 0 0 0 3px rgba(68, 114, 196, 0.15);
 }
 
+.dash-select-trigger>svg:not(.dash-chevron),
+.dash-option>svg {
+  display: none;
+}
+
 .dash-chevron {
   transition: transform 0.2s;
   color: #888;
@@ -268,22 +273,10 @@ body.is-resizing * {
 .panel-drag-handle {
   cursor: grab;
   user-select: none;
-  padding-right: 24px;
 }
 
 .panel-drag-handle:active {
   cursor: grabbing;
-}
-
-.panel-drag-handle::after {
-  content: '';
-  width: 14px;
-  height: 14px;
-  margin-left: 10px;
-  flex: 0 0 auto;
-  opacity: 0.45;
-  background-image: radial-gradient(circle, #4472c4 1.4px, transparent 1.6px);
-  background-size: 5px 5px;
 }
 
 .is-panel-dragging {
@@ -858,17 +851,6 @@ body.is-resizing * {
   letter-spacing: -0.3px;
   display: flex;
   align-items: center;
-}
-
-.panel h2::before {
-  content: '';
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  background-color: #4472c4;
-  border-radius: 50%;
-  margin-right: 10px;
-  box-shadow: 0 0 8px rgba(68, 114, 196, 0.6);
 }
 
 .panel.kpi-chart-panel h2 {

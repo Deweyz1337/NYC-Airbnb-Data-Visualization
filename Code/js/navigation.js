@@ -4,13 +4,15 @@
 
 function initNavigation() {
   window.currentPage = 0;
-  const dashLabels = ['Dashboard 1', 'Dashboard 2'];
+  const navLabels = ['Dashboard 1', 'Dashboard 2'];
+  const dashboardTitles = ['Tình hình đánh giá tại New York City', 'Phân tích doanh thu và nhu cầu đặt phòng tại Brooklyn'];
 
   window.goToPage = (page) => {
     window.currentPage = page;
 
-    // Cập nhật label
-    document.getElementById('dashSelectLabel').textContent = dashLabels[page];
+    // Cập nhật header và label
+    document.getElementById('dashboardTitle').textContent = dashboardTitles[page];
+    document.getElementById('dashSelectLabel').textContent = navLabels[page];
 
     // Cập nhật trạng thái active các option
     document.querySelectorAll('.dash-option').forEach(opt => {
