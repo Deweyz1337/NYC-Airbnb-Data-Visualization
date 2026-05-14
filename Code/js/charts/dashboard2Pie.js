@@ -62,7 +62,11 @@
         D2.toggleSelection('priceTier', d.data.priceTier);
       })
       .append('title')
-      .text(d => `${d.data.priceTier}: ${D2.fmtInt(d.data.booked)} booked days (${D2.fmtPct(d.data.share)})`);
+      .text(d => [
+        d.data.priceTier,
+        `Doanh thu ước tính: ${D2.formatRevenueValue(d.data.totalRevenue)}`,
+        `Tổng ngày book: ${D2.fmtInt(Math.round(d.data.booked))}`,
+      ].join('\n'));
 
     slice.append('text')
       .attr('class', 'room-share-label')
@@ -74,7 +78,7 @@
     legend.innerHTML = data.map(d => {
       const color = D2.PRICE_TIER_COLORS[d.priceTier] || D2.PRICE_TIER_COLORS.Unknown;
       return `
-        <div class="room-share-row">
+        <div class="room-share-row" title="${d.priceTier}&#10;Doanh thu ước tính: ${D2.formatRevenueValue(d.totalRevenue)}&#10;Tổng ngày book: ${D2.fmtInt(Math.round(d.booked))}">
           <span class="room-share-swatch" style="background:${color}"></span>
           <div class="room-share-copy">
             <div class="room-share-name">${d.priceTier}</div>

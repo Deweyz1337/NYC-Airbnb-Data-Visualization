@@ -114,9 +114,8 @@
       .append('title')
       .text(d => [
         d.neighbourhood,
-        `Doanh thu: ${D2.formatRevenueValue(d.totalRevenue)}`,
-        `Booked days: ${D2.fmtInt(d.totalBookedDays)}`,
-        `Listings: ${D2.fmtInt(d.listingCount)}`,
+        `Doanh thu ước tính: ${D2.formatRevenueValue(d.totalRevenue)}`,
+        `Số phòng (listing): ${D2.fmtInt(d.listingCount)}`,
       ].join('\n'));
 
     const selectedNeighborhood = D2.getActiveSelection() &&

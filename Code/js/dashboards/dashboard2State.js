@@ -218,24 +218,34 @@
   D2.buildRoomShareData = function buildRoomShareData(listings) {
     const brooklynListings = D2.getBrooklynListings(listings);
     const totalBooked = d3.sum(brooklynListings, d => d.estimated_occupancy_l365d || 0) || 1;
-    const counts = d3.rollup(
+    const statsByTier = d3.rollup(
       brooklynListings,
-      v => d3.sum(v, d => d.estimated_occupancy_l365d || 0),
+      v => ({
+        booked: d3.sum(v, d => d.estimated_occupancy_l365d || 0),
+        totalRevenue: d3.sum(v, d => d.estimated_revenue_l365d || 0),
+        listingCount: v.length,
+      }),
       d => d.price_tier || 'Unknown'
     );
 
     const order = [...D2.PRICE_TIER_ORDER];
-    counts.forEach((_, key) => {
+    statsByTier.forEach((_, key) => {
       if (!order.includes(key)) order.push(key);
     });
 
     return order
-      .filter(priceTier => counts.has(priceTier))
-      .map(priceTier => ({
-        priceTier,
-        booked: counts.get(priceTier) || 0,
-        share: (counts.get(priceTier) || 0) / totalBooked,
-      }))
+      .filter(priceTier => statsByTier.has(priceTier))
+      .map(priceTier => {
+        const stats = statsByTier.get(priceTier) || { booked: 0, totalRevenue: 0, listingCount: 0 };
+
+        return {
+          priceTier,
+          booked: stats.booked || 0,
+          totalRevenue: stats.totalRevenue || 0,
+          listingCount: stats.listingCount || 0,
+          share: (stats.booked || 0) / totalBooked,
+        };
+      })
       .sort((a, b) => d3.descending(a.booked, b.booked));
   };
 
@@ -243,15 +253,21 @@
     const brooklynListings = D2.getBrooklynListings(listings);
     const byNeighborhood = d3.rollup(
       brooklynListings,
-      v => d3.mean(v, d => d.estimated_occupancy_l365d || 0),
+      v => ({
+        avgDays: d3.mean(v, d => d.estimated_occupancy_l365d || 0),
+        totalBookedDays: d3.sum(v, d => d.estimated_occupancy_l365d || 0),
+        listingCount: v.length,
+      }),
       d => d.neighbourhood_cleansed || 'Unknown'
     );
 
     const direction = bookingSortOrder === 'desc' ? d3.descending : d3.ascending;
 
-    return Array.from(byNeighborhood, ([neighbourhood, avgDays]) => ({
+    return Array.from(byNeighborhood, ([neighbourhood, stats]) => ({
       neighbourhood,
-      avgDays: +avgDays || 0,
+      avgDays: +stats.avgDays || 0,
+      totalBookedDays: stats.totalBookedDays || 0,
+      listingCount: stats.listingCount || 0,
     })).sort((a, b) =>
       direction(a.avgDays, b.avgDays) || d3.ascending(a.neighbourhood, b.neighbourhood)
     );

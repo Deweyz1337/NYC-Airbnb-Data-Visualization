@@ -3,11 +3,31 @@
  */
 
 function buildDashboard1YearData(reviews) {
-  const reviewsByYear = d3.rollup(reviews, v => v.length, d => d.date.split('-')[0]);
+  const makeEmptyQuarters = () => [1, 2, 3, 4].map(quarter => ({ quarter, count: 0 }));
+  const getQuarter = (date) => {
+    const month = Number((date || '').split('-')[1]);
+    return month >= 1 && month <= 12 ? Math.floor((month - 1) / 3) + 1 : null;
+  };
+
+  const reviewsByYear = d3.rollup(
+    reviews,
+    values => {
+      const quarters = makeEmptyQuarters();
+
+      values.forEach(review => {
+        const quarter = getQuarter(review.date);
+        if (quarter) quarters[quarter - 1].count += 1;
+      });
+
+      return { count: values.length, quarters };
+    },
+    d => d.date.split('-')[0]
+  );
   const yearData = [];
 
   for (let y = 2009; y <= 2025; y++) {
-    yearData.push({ year: y, count: reviewsByYear.get(String(y)) || 0 });
+    const yearStats = reviewsByYear.get(String(y)) || { count: 0, quarters: makeEmptyQuarters() };
+    yearData.push({ year: y, count: yearStats.count, quarters: yearStats.quarters });
   }
 
   return yearData;
@@ -32,10 +52,12 @@ function buildDashboard1NeighbourhoodData(reviews) {
     v => v.length,
     r => window.listingNeighbourhoodMap.get(r.listing_id)
   );
+  const totalReviews = d3.sum(Array.from(neighbourhoodReviews.values()));
 
   window.allNeighbourhoodData = Array.from(neighbourhoodReviews, ([name, count]) => ({
     neighbourhood: name,
     count,
+    share: totalReviews ? count / totalReviews : 0,
   }));
 
   return [...window.allNeighbourhoodData]
@@ -44,6 +66,7 @@ function buildDashboard1NeighbourhoodData(reviews) {
         ? b.count - a.count
         : a.count - b.count
     ))
+    .map((d, index) => ({ ...d, rank: index + 1 }))
     .slice(0, 30);
 }
 

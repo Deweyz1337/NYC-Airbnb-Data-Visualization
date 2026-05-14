@@ -8,6 +8,46 @@ function drawLineChart(data) {
   const W = el.clientWidth || 700, H = el.clientHeight || 300;
   const m = { top: 30, right: 30, bottom: 50, left: 55 };
   const w = W - m.left - m.right, h = H - m.top - m.bottom;
+  const tooltip = d3.select(el).append('div')
+    .attr('class', 'line-chart-tooltip')
+    .style('opacity', 0)
+    .style('visibility', 'hidden');
+
+  const quarterLabel = d => `Quý ${d.quarter}`;
+  const tooltipHtml = d => `
+    <div class="line-chart-tooltip-title">Năm ${d.year}</div>
+    <div class="line-chart-tooltip-total">Tổng: ${fmt(d.count)} reviews</div>
+    ${(d.quarters || []).map(q => `
+      <div class="line-chart-tooltip-row">
+        <span>${quarterLabel(q)}</span>
+        <strong>${fmt(q.count)}</strong>
+      </div>
+    `).join('')}
+  `;
+  const moveTooltip = (event) => {
+    const [mx, my] = d3.pointer(event, el);
+    const node = tooltip.node();
+    const tooltipW = node.offsetWidth;
+    const tooltipH = node.offsetHeight;
+    let left = mx + 14;
+    if (left + tooltipW > W - 8) left = mx - tooltipW - 14;
+    const top = Math.max(8, Math.min(H - tooltipH - 8, my - tooltipH / 2));
+
+    tooltip
+      .style('left', `${Math.max(8, left)}px`)
+      .style('top', `${top}px`);
+  };
+  const showTooltip = (event, d) => {
+    tooltip.html(tooltipHtml(d))
+      .style('opacity', 1)
+      .style('visibility', 'visible');
+    moveTooltip(event);
+  };
+  const hideTooltip = () => {
+    tooltip
+      .style('opacity', 0)
+      .style('visibility', 'hidden');
+  };
 
   const svg = d3.select('#lineChart').append('svg')
     .attr('viewBox', `0 0 ${W} ${H}`)
@@ -71,6 +111,9 @@ function drawLineChart(data) {
       const isActive = !window.currentYear || window.currentYear === String(d.year);
       return `dot clickable ${isActive ? '' : 'dimmed'}`;
     })
+    .on('mouseenter', showTooltip)
+    .on('mousemove', moveTooltip)
+    .on('mouseleave', hideTooltip)
     .on('click', (e, d) => window.toggleYear(d.year));
 
   // Data labels
@@ -88,5 +131,8 @@ function drawLineChart(data) {
       const isActive = !window.currentYear || window.currentYear === String(d.year);
       return `lbl clickable ${isActive ? '' : 'dimmed'}`;
     })
+    .on('mouseenter', showTooltip)
+    .on('mousemove', moveTooltip)
+    .on('mouseleave', hideTooltip)
     .on('click', (e, d) => window.toggleYear(d.year));
 }

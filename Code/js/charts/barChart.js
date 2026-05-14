@@ -19,6 +19,13 @@ function drawBarChart(data) {
   const w = W - m.left - m.right, h = H - m.top - m.bottom;
 
   const fontSizePx = Math.max(9, Math.min(14, Math.floor(dynamicBarHeight * 0.2))) + 'px';
+  const fmtPct = d3.format('.1%');
+  const barTooltip = d => [
+    d.neighbourhood,
+    `Đóng góp: ${fmtPct(d.share || 0)}`,
+    `Rank: #${d.rank || '-'}`,
+    `Reviews: ${fmt(d.count)}`,
+  ].join('\n');
 
   const svg = d3.select('#barChart').append('svg')
     .attr('viewBox', `0 0 ${W} ${H}`)
@@ -80,7 +87,9 @@ function drawBarChart(data) {
       const isActive = !window.currentNeighbourhood || window.currentNeighbourhood === d.neighbourhood;
       return `bar clickable ${isActive ? '' : 'dimmed'}`;
     })
-    .on('click', (e, d) => window.toggleNeighbourhood(d.neighbourhood));
+    .on('click', (e, d) => window.toggleNeighbourhood(d.neighbourhood))
+    .append('title')
+    .text(barTooltip);
 
   // Neighbourhood name labels (trái)
   g.selectAll('.hlbl').data(data).join('foreignObject')
@@ -92,6 +101,7 @@ function drawBarChart(data) {
       const isActive = !window.currentNeighbourhood || window.currentNeighbourhood === d.neighbourhood;
       return `hlbl clickable ${isActive ? '' : 'dimmed'}`;
     })
+    .attr('title', barTooltip)
     .on('click', (e, d) => window.toggleNeighbourhood(d.neighbourhood))
     .html(d => `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: flex-end;"><span style="text-align: right; font-size: ${fontSizePx}; line-height: 1.15; color: #333; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; word-break: break-word;">${d.neighbourhood}</span></div>`);
 
@@ -105,5 +115,7 @@ function drawBarChart(data) {
     .attr('class', d => {
       const isActive = !window.currentNeighbourhood || window.currentNeighbourhood === d.neighbourhood;
       return `vlbl ${isActive ? '' : 'dimmed'}`;
-    });
+    })
+    .append('title')
+    .text(barTooltip);
 }

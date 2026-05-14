@@ -370,6 +370,40 @@ body.is-resizing * {
 #lineChart {
   flex: 1;
   min-height: 0;
+  position: relative;
+}
+
+.line-chart-tooltip {
+  position: absolute;
+  z-index: 20;
+  min-width: 140px;
+  padding: 10px 12px;
+  border: 1px solid #d5dce8;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 8px 24px rgba(28, 39, 60, 0.16);
+  color: #2b2b2b;
+  font-size: 12px;
+  line-height: 1.35;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
+}
+
+.line-chart-tooltip-title {
+  margin-bottom: 2px;
+  font-weight: 700;
+  color: #1f3b68;
+}
+
+.line-chart-tooltip-total {
+  margin-bottom: 6px;
+  color: #5c6675;
+}
+
+.line-chart-tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
 }
 
 #barPanel {

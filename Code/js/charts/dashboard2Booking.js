@@ -43,6 +43,11 @@
     const H = Math.max(outerH, 320);
     const w = Math.max(0, W - margin.left - margin.right);
     const h = Math.max(0, H - margin.top - margin.bottom);
+    const bookingTooltip = d => [
+      d.neighbourhood,
+      `Tổng ngày book: ${D2.fmtInt(Math.round(d.totalBookedDays || 0))}`,
+      `Tổng số phòng: ${D2.fmtInt(d.listingCount || 0)}`,
+    ].join('\n');
 
     const svg = d3.select(container).append('svg')
       .attr('viewBox', `0 0 ${W} ${H}`)
@@ -93,7 +98,7 @@
         D2.toggleSelection('neighbourhood', d.neighbourhood);
       })
       .append('title')
-      .text(d => `${d.neighbourhood}: ${D2.fmtOne(d.avgDays)} avg booked days`);
+      .text(bookingTooltip);
 
     g.selectAll('.value')
       .data(data)
@@ -108,7 +113,9 @@
       .attr('fill', '#2b2b2b')
       .attr('font-size', '11px')
       .attr('font-weight', 600)
-      .text(d => D2.fmtOne(d.avgDays));
+      .text(d => D2.fmtOne(d.avgDays))
+      .append('title')
+      .text(bookingTooltip);
 
     g.append('g')
       .attr('transform', `translate(0,${h})`)
