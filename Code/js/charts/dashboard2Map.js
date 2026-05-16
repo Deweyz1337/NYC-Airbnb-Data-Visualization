@@ -39,6 +39,59 @@
     `;
   }
 
+  function getMapLabelText(neighbourhood, isSelected) {
+    return neighbourhood || '';
+  }
+
+  function estimateLabelBox(d, labelText, fontSize) {
+    const [x, y] = d.labelPoint;
+    const width = Math.max(24, labelText.length * fontSize * 0.62);
+    const height = fontSize * 1.35;
+    const padding = 4;
+
+    return {
+      left: x - width / 2 - padding,
+      right: x + width / 2 + padding,
+      top: y - height / 2 - padding,
+      bottom: y + height / 2 + padding,
+    };
+  }
+
+  function boxesOverlap(a, b) {
+    return a.left < b.right &&
+      a.right > b.left &&
+      a.top < b.bottom &&
+      a.bottom > b.top;
+  }
+
+  function boxFits(box, width, height) {
+    return box.left >= 0 &&
+      box.right <= width &&
+      box.top >= 0 &&
+      box.bottom <= height;
+  }
+
+  function pickVisibleMapLabels(candidates, width, height, selectedNeighborhood) {
+    const placedBoxes = [];
+    const visibleLabels = [];
+
+    candidates.forEach(d => {
+      const isSelected = d.neighbourhood === selectedNeighborhood;
+      const fontSize = isSelected ? 12 : (width < 520 || height < 260 ? 9 : 10);
+      const labelText = getMapLabelText(d.neighbourhood, isSelected);
+      const box = estimateLabelBox(d, labelText, fontSize);
+
+      if (!isSelected && (!boxFits(box, width, height) || placedBoxes.some(existing => boxesOverlap(box, existing)))) {
+        return;
+      }
+
+      placedBoxes.push(box);
+      visibleLabels.push({ ...d, labelText, fontSize });
+    });
+
+    return visibleLabels;
+  }
+
   D2.drawBrooklynRevenueChoropleth = function drawBrooklynRevenueChoropleth(data, geojson, colorDomainData = data) {
     const container = document.getElementById('brooklynRevenueMap');
     const legend = document.getElementById('brooklynRevenueLegend');
@@ -122,7 +175,7 @@
       D2.getActiveSelection().type === 'neighbourhood'
       ? D2.getActiveSelection().value
       : null;
-    const labelData = data
+    const labelCandidates = data
       .map(d => ({
         ...d,
         labelArea: path.area(d.feature),
@@ -130,14 +183,14 @@
       }))
       .filter(d => (
         d.neighbourhood === selectedNeighborhood ||
-        (d.totalRevenue > 0 && d.labelArea >= 170)
+        d.totalRevenue > 0
       ))
       .sort((a, b) =>
         (a.neighbourhood === selectedNeighborhood ? -1 : 0) ||
         (b.neighbourhood === selectedNeighborhood ? 1 : 0) ||
         d3.descending(a.totalRevenue, b.totalRevenue)
-      )
-      .slice(0, selectedNeighborhood ? 1 : 14);
+      );
+    const labelData = pickVisibleMapLabels(labelCandidates, W, H, selectedNeighborhood);
 
     svg.append('g')
       .attr('class', 'brooklyn-map-labels')
@@ -152,7 +205,8 @@
       .attr('y', d => d.labelPoint[1])
       .attr('text-anchor', 'middle')
       .attr('dominant-baseline', 'middle')
-      .text(d => d.neighbourhood);
+      .style('font-size', d => `${d.fontSize}px`)
+      .text(d => d.labelText);
 
     if (legend) {
       legend.innerHTML = buildRevenueLegendHtml(scaleMin, scaleMax, revenueScale);

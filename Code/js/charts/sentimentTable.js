@@ -4,10 +4,15 @@
 
 function drawSentimentTable(sentMap, boroughs) {
   const sentiments = ['positive', 'neutral', 'negative'];
+  const fmtPct = d3.format('.1%');
+  const boroughTotals = {};
 
   // Thu thập tất cả giá trị để xây dựng thang màu
   const allVals = [];
-  sentiments.forEach(s => boroughs.forEach(b => allVals.push(sentMap[b][s])));
+  boroughs.forEach(b => {
+    boroughTotals[b] = d3.sum(sentiments, s => sentMap[b][s] || 0);
+    sentiments.forEach(s => allVals.push(sentMap[b][s]));
+  });
   const maxVal = d3.max(allVals);
   const minVal = d3.min(allVals);
 
@@ -40,13 +45,16 @@ function drawSentimentTable(sentMap, boroughs) {
     boroughs.forEach(b => {
       const val = sentMap[b][sent];
       const bg = colorScale(val);
+      const total = boroughTotals[b] || 0;
+      const share = total ? val / total : 0;
+      const tooltip = `${sent} - ${b};&#10;Tỉ lệ trong ${b}: ${fmtPct(share)}`;
 
       const isBoroughActive = !window.currentBorough || window.currentBorough === b;
       const isSentimentActive = !window.currentSentiment || window.currentSentiment === sent;
       const isActiveCell = isBoroughActive && isSentimentActive;
       const cellClass = isActiveCell ? '' : 'filter-dimmed';
 
-      html += `<td class="${cellClass}" style="background:${bg}">${fmt(val)}</td>`;
+      html += `<td class="${cellClass}" title="${tooltip}" style="background:${bg}">${fmt(val)}</td>`;
     });
     html += '</tr>';
   });

@@ -153,6 +153,8 @@ body.is-resizing * {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+  max-width: calc(100% - 360px);
+  min-width: 0;
   text-align: center;
   pointer-events: none;
 }
@@ -162,8 +164,11 @@ body.is-resizing * {
   font-size: 22px;
   font-weight: 700;
   color: #1a1a2e;
-  letter-spacing: -0.5px;
+  letter-spacing: 0;
   margin: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -531,13 +536,18 @@ body.is-resizing * {
   flex: 1;
   position: relative;
   min-height: 0;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
   overflow: hidden;
 }
 
 .brooklyn-revenue-map {
-  width: 100%;
-  height: 100%;
+  flex: 1 1 0;
+  width: auto;
+  height: auto;
   min-height: 0;
+  min-width: 260px;
 }
 
 .brooklyn-revenue-map svg {
@@ -597,17 +607,19 @@ body.is-resizing * {
 }
 
 .brooklyn-revenue-legend {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+  position: relative;
+  top: auto;
+  right: auto;
+  flex: 0 0 190px;
   width: 190px;
   padding: 10px 12px;
   border: 1px solid #e1e6ef;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  background: #fff;
+  box-shadow: none;
+  min-height: 0;
   pointer-events: none;
-  z-index: 2;
+  z-index: 1;
 }
 
 .brooklyn-revenue-legend-title {
@@ -674,12 +686,18 @@ body.is-resizing * {
   flex: 1;
   position: relative;
   min-height: 0;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  overflow: hidden;
 }
 
 .room-share-chart {
-  width: 100%;
-  height: 100%;
+  flex: 1 1 0;
+  width: auto;
+  height: auto;
   min-height: 0;
+  min-width: 220px;
 }
 
 .room-share-chart svg {
@@ -702,21 +720,21 @@ body.is-resizing * {
 }
 
 .room-share-legend {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 200px;
+  position: relative;
+  top: auto;
+  right: auto;
+  flex: 0 0 220px;
+  width: 220px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   padding: 8px 10px;
-  background: rgba(255, 255, 255, 0.94);
+  background: #fff;
+  min-height: 0;
   border: 1px solid #e1e6ef;
   border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-  max-height: calc(100% - 16px);
   overflow: auto;
-  z-index: 2;
+  z-index: 1;
 }
 
 .room-share-row {
@@ -750,7 +768,9 @@ body.is-resizing * {
 }
 
 .room-share-copy {
+  flex: 1 1 auto;
   min-width: 0;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -759,12 +779,14 @@ body.is-resizing * {
 .room-share-name {
   font-weight: 600;
   line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .room-share-meta {
   color: #666;
   font-size: 11px;
   line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .brooklyn-booking-chart {
@@ -848,9 +870,12 @@ body.is-resizing * {
   font-weight: 700;
   color: #222;
   margin-bottom: 16px;
-  letter-spacing: -0.3px;
+  letter-spacing: 0;
   display: flex;
   align-items: center;
+  min-width: 0;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
 .panel.kpi-chart-panel h2 {
@@ -868,6 +893,8 @@ body.is-resizing * {
 }
 
 .chart-panel-toolbar h2 {
+  flex: 1 1 auto;
+  min-width: 0;
   margin-bottom: 0;
 }
 
